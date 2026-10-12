@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kembara Wira Ejaan - BM Tahun 2</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts: Fredoka & Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Canvas Confetti -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        fredoka: ['Fredoka', 'sans-serif'],
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        rpg: {
+                            gold: '#fbbf24',
+                            wood: '#854d0e',
+                            shield: '#1e293b',
+                            hp: '#ef4444',
+                            xp: '#3b82f6',
+                            bg: '#0f172a'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'bounce-gentle': 'bounce 2s infinite',
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                        'float': 'float 3s ease-in-out infinite'
+                    },
+                    keyframes: {
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-2px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(4px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-6px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(6px, 0, 0)' }
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px)' },
+                            '50%': { transform: 'translateY(-8px)' }
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: radial-gradient(circle, #1e1b4b 0%, #0f172a 100%);
+            color: #f8fafc;
+            min-height: 100vh;
+            user-select: none;
+        }
+
+        .rpg-border {
+            border: 4px solid #f59e0b;
+            box-shadow: 0 0 15px rgba(245, 158, 11, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 1.5rem;
+        }
+
+        .rpg-card {
+            background: linear-gradient(145deg, #1e293b, #0f172a);
+            border: 3px solid #3b82f6;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .rpg-button {
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 6px 0 #1e293b;
+        }
+
+        .rpg-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #1e293b;
+        }
+
+        .rpg-button:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #1e293b;
+        }
+
+        .progress-bar-glow {
+            box-shadow: 0 0 8px currentColor;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #f59e0b;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen justify-between p-2 sm:p-4 overflow-x-hidden">
+
+    <header class="w-full max-w-5xl mx-auto flex items-center justify-between bg-slate-900/80 p-3 sm:p-4 rounded-2xl border-2 border-amber-500/50 backdrop-blur-md shadow-xl mb-4">
+        <div class="flex items-center gap-3">
+            <div class="bg-amber-500 text-slate-950 p-2 sm:p-3 rounded-xl font-bold text-xl shadow-lg">
+                <i class="fa-solid fa-shield-halved text-2xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl sm:text-2xl font-bold bg-gradient-to-r from-amber-300 via-orange-400 to-yellow-200 bg-clip-text text-transparent">
+                    KEMBARA WIRA BAHASA
+                </h1>
+                <p class="text-xs sm:text-sm text-slate-400">Bahasa Melayu Tahun 2 • Tanda Baca & Kesalahan Ejaan</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <button id="bgmToggleBtn" onclick="toggleBGM()" class="bg-slate-800 hover:bg-slate-700 text-amber-400 p-2.5 rounded-xl border border-amber-500/30 text-sm font-semibold flex items-center gap-2 transition">
+                <i id="bgmIcon" class="fa-solid fa-volume-xmark"></i>
+                <span class="hidden sm:inline">Bunyi</span>
+            </button>
+            <button onclick="openSettingsModal()" class="bg-slate-800 hover:bg-slate-700 text-sky-400 p-2.5 rounded-xl border border-sky-500/30 text-sm font-semibold flex items-center gap-2 transition">
+                <i class="fa-solid fa-gear"></i>
+                <span class="hidden sm:inline">Tetapan Guru</span>
+            </button>
+        </div>
+    </header>
+
+    <main class="w-full max-w-5xl mx-auto flex-1 flex flex-col justify-center items-center">
+
+        <section id="registrationScreen" class="w-full max-w-xl bg-slate-900/90 rpg-border p-6 sm:p-8 flex flex-col items-center text-center shadow-2xl relative overflow-hidden">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl"></div>
+            <div class="absolute -bottom-10 -left-10 w-32 h-32 bg-indigo-500/10 rounded-full blur-2xl"></div>
+
+            <div class="inline-block p-4 bg-amber-500/10 rounded-full border border-amber-500/30 mb-3 animate-float">
+                <i class="fa-solid fa-hat-wizard text-5xl text-amber-400"></i>
+            </div>
+
+            <h2 class="text-2xl sm:text-3xl font-bold text-amber-300 mb-2">Selamat Datang Wira Cilik!</h2>
+            <p class="text-slate-300 text-sm sm:text-base mb-6">Sila masukkan nama dan kelas anda untuk memulakan cabaran ejaan & tanda baca di Kerajaan Bahasa.</p>
+
+            <form id="regForm" onsubmit="startGame(event)" class="w-full flex flex-col gap-4 text-left">
+                <div>
+                    <label for="studentName" class="block text-sm font-semibold text-amber-200 mb-1">
+                        <i class="fa-solid fa-user-ninja mr-2"></i>Nama Murid:
+                    </label>
+                    <input type="text" id="studentName" required placeholder="Contoh: Adam Rayyan" 
+                           class="w-full px-4 py-3 rounded-xl bg-slate-800 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 text-base font-sans">
+                </div>
+
+                <div>
+                    <label for="studentClass" class="block text-sm font-semibold text-amber-200 mb-1">
+                        <i class="fa-solid fa-school mr-2"></i>Kelas Tahun 2:
+                    </label>
+                    <input type="text" id="studentClass" required placeholder="Contoh: 2 Cemerlang" 
+                           class="w-full px-4 py-3 rounded-xl bg-slate-800 border-2 border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:border-amber-400 text-base font-sans">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-amber-200 mb-2">
+                        <i class="fa-solid fa-masks-theater mr-2"></i>Pilih Avatar Wira Anda:
+                    </label>
+                    <div class="grid grid-cols-4 gap-2 sm:gap-3">
+                        <button type="button" onclick="selectAvatar('pendekar')" id="avatar-pendekar" 
+                                class="avatar-option p-2 bg-slate-800 rounded-xl border-2 border-amber-400 flex flex-col items-center gap-1 hover:bg-slate-700 transition">
+                            <span class="text-3xl">⚔️</span>
+                            <span class="text-xs font-bold text-amber-300">Pendekar</span>
+                        </button>
+                        <button type="button" onclick="selectAvatar('puteri')" id="avatar-puteri" 
+                                class="avatar-option p-2 bg-slate-800 rounded-xl border-2 border-slate-700 flex flex-col items-center gap-1 hover:bg-slate-700 transition">
+                            <span class="text-3xl">👑</span>
+                            <span class="text-xs font-bold text-slate-300">Puteri</span>
+                        </button>
+                        <button type="button" onclick="selectAvatar('pahlawan')" id="avatar-pahlawan" 
+                                class="avatar-option p-2 bg-slate-800 rounded-xl border-2 border-slate-700 flex flex-col items-center gap-1 hover:bg-slate-700 transition">
+                            <span class="text-3xl">🛡️</span>
+                            <span class="text-xs font-bold text-slate-300">Pahlawan</span>
+                        </button>
+                        <button type="button" onclick="selectAvatar('pemanah')" id="avatar-pemanah" 
+                                class="avatar-option p-2 bg-slate-800 rounded-xl border-2 border-slate-700 flex flex-col items-center gap-1 hover:bg-slate-700 transition">
+                            <span class="text-3xl">🏹</span>
+                            <span class="text-xs font-bold text-slate-300">Pemanah</span>
+                        </button>
+                    </div>
+                </div>
+
+                <button type="submit" class="mt-4 w-full py-4 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-slate-950 font-bold text-lg rounded-xl shadow-lg rpg-button border-b-4 border-amber-700">
+                    MULAKAN PENGEMBARAAN <i class="fa-solid fa-play ml-2"></i>
+                </button>
+            </form>
+        </section>
+
+        <section id="gameDashboard" class="hidden w-full flex flex-col gap-6">
+
+            <div class="w-full bg-slate-900/90 rpg-border p-4 sm:p-5 flex flex-col md:flex-row items-center justify-between gap-4 shadow-xl">
+                <div class="flex items-center gap-4 w-full md:w-auto">
+                    <div id="heroAvatarIcon" class="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-amber-400 to-orange-600 rounded-2xl border-4 border-amber-300 flex items-center justify-center text-3xl sm:text-4xl shadow-inner relative">
+                        ⚔️
+                        <div class="absolute -bottom-2 bg-slate-950 text-amber-300 border border-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full">
+                            Lvl <span id="heroLevel">1</span>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 id="displayHeroName" class="text-lg sm:text-xl font-bold text-amber-300 leading-tight">Nama Wira</h3>
+                        <p id="displayHeroClass" class="text-xs sm:text-sm text-slate-400">Kelas 2 Cemerlang</p>
+                        <div id="heroTitleBadge" class="inline-block mt-1 px-2.5 py-0.5 bg-indigo-900/80 border border-indigo-400 text-indigo-200 text-xs font-semibold rounded-full">
+                            Penjelajah Ejaan
+                        </div>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-80 flex flex-col gap-2.5">
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-bold mb-1">
+                            <span class="text-red-400 flex items-center gap-1">
+                                <i class="fa-solid fa-heart text-red-500 animate-pulse"></i> NYAWA (HP)
+                            </span>
+                            <span id="hpText" class="text-slate-200">100 / 100</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-5 rounded-full p-0.5 border border-red-900/60 shadow-inner">
+                            <div id="hpFill" class="bg-gradient-to-r from-red-600 to-rose-400 h-full rounded-full transition-all duration-500 progress-bar-glow text-red-400" style="width: 100%;"></div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="flex justify-between items-center text-xs font-bold mb-1">
+                            <span class="text-blue-400 flex items-center gap-1">
+                                <i class="fa-solid fa-star text-yellow-400"></i> MATAKU (XP)
+                            </span>
+                            <span id="xpText" class="text-slate-200">0 XP</span>
+                        </div>
+                        <div class="w-full bg-slate-950 h-5 rounded-full p-0.5 border border-blue-900/60 shadow-inner">
+                            <div id="xpFill" class="bg-gradient-to-r from-blue-600 to-sky-400 h-full rounded-full transition-all duration-500 progress-bar-glow text-blue-400" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full bg-slate-900/80 rounded-2xl p-4 border border-slate-700/80 shadow-lg">
+                <div class="flex justify-between items-center mb-3">
+                    <span class="text-sm font-bold text-amber-300 flex items-center gap-2">
+                        <i class="fa-solid fa-map-location-dot"></i> PETA STESEN CABARAN
+                    </span>
+                    <span id="stationProgressText" class="text-xs bg-slate-800 text-slate-300 px-3 py-1 rounded-full font-semibold border border-slate-700">
+                        Stesen 1 / 4
+                    </span>
+                </div>
+                
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-3">
+                    <div id="stesenCard1" class="stesen-card p-3 rounded-xl border-2 border-amber-400 bg-amber-500/10 flex flex-col items-center text-center transition">
+                        <div class="w-8 h-8 rounded-full bg-amber-500 text-slate-950 flex items-center justify-center font-bold text-sm mb-1">1</div>
+                        <span class="text-xs font-bold text-amber-300">Hutan Huruf Besar</span>
+                        <span id="stesenBadge1" class="text-[10px] text-amber-200 mt-1">🟡 Sedang Dijalani</span>
+                    </div>
+                    <div id="stesenCard2" class="stesen-card p-3 rounded-xl border-2 border-slate-800 bg-slate-950/50 opacity-60 flex flex-col items-center text-center transition">
+                        <div class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-sm mb-1">2</div>
+                        <span class="text-xs font-bold text-slate-400">Gua Imbuhan & Koma</span>
+                        <span id="stesenBadge2" class="text-[10px] text-slate-500 mt-1">🔒 Terkunci</span>
+                    </div>
+                    <div id="stesenCard3" class="stesen-card p-3 rounded-xl border-2 border-slate-800 bg-slate-950/50 opacity-60 flex flex-col items-center text-center transition">
+                        <div class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-sm mb-1">3</div>
+                        <span class="text-xs font-bold text-slate-400">Tasik Penanya & Seruan</span>
+                        <span id="stesenBadge3" class="text-[10px] text-slate-500 mt-1">🔒 Terkunci</span>
+                    </div>
+                    <div id="stesenCard4" class="stesen-card p-3 rounded-xl border-2 border-slate-800 bg-slate-950/50 opacity-60 flex flex-col items-center text-center transition">
+                        <div class="w-8 h-8 rounded-full bg-slate-800 text-slate-400 flex items-center justify-center font-bold text-sm mb-1">4</div>
+                        <span class="text-xs font-bold text-slate-400">Istana Raja Bahasa</span>
+                        <span id="stesenBadge4" class="text-[10px] text-slate-500 mt-1">🔒 Terkunci</span>
+                    </div>
+                </div>
+            </div>
+
+            <div id="battleContainer" class="w-full bg-slate-900/90 rpg-border p-5 sm:p-8 flex flex-col gap-6 shadow-2xl relative">
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4 bg-slate-950/60 p-4 rounded-xl border border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <div id="monsterAvatar" class="text-4xl sm:text-5xl animate-bounce-gentle p-2 bg-slate-800/80 rounded-2xl border border-amber-500/30">
+                            👾
+                        </div>
+                        <div>
+                            <span id="currentStationTag" class="text-xs font-bold text-amber-400 uppercase tracking-wider">STESEN 1: HUTAN EJAAN VOKAL</span>
+                            <h4 id="monsterName" class="text-lg sm:text-xl font-bold text-slate-100">Raksasa Ejaan Salah</h4>
+                        </div>
+                    </div>
+                    <div class="text-right sm:text-right text-xs text-slate-400">
+                        Soalan <span id="qIndexText" class="text-amber-300 font-bold text-base">1</span> daripada <span id="qTotalText" class="text-base font-bold">12</span>
+                    </div>
+                </div>
+
+                <div class="bg-gradient-to-r from-slate-950 via-slate-900 to-slate-950 p-6 rounded-2xl border-2 border-indigo-500/40 text-center shadow-inner">
+                    <p class="text-xs text-indigo-300 font-semibold uppercase mb-2">Pilih ejaan perkataan yang BETUL bagi melengkapkan ayat:</p>
+                    <p id="questionPrompt" class="text-lg sm:text-2xl font-bold text-amber-200 leading-relaxed">
+                        "Pilih ejaan yang betul di sini."
+                    </p>
+                </div>
+
+                <div id="optionsGrid" class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+                </div>
+
+                <div id="feedbackBox" class="hidden p-4 rounded-xl border-2 text-center text-sm sm:text-base font-bold transition-all duration-300">
+                </div>
+            </div>
+
+        </section>
+
+        <div id="badgeModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-slate-900 rpg-border p-6 sm:p-8 max-w-md w-full text-center flex flex-col items-center gap-4 animate-shake shadow-2xl">
+                <div id="badgeIcon" class="w-24 h-24 bg-gradient-to-br from-amber-400 to-yellow-600 rounded-full border-4 border-amber-200 flex items-center justify-center text-5xl shadow-lg animate-bounce">
+                    🥇
+                </div>
+                <div>
+                    <span class="text-xs font-bold text-amber-400 uppercase tracking-widest">TAHNIAH! LENCANA DIBUKA!</span>
+                    <h3 id="badgeTitle" class="text-2xl font-bold text-amber-300 mt-1">Lencana Wira Vokal</h3>
+                    <p id="badgeDesc" class="text-xs sm:text-sm text-slate-300 mt-2">
+                        Anda telah berjaya menewaskan cabaran Stesen 1 dengan cemerlang!
+                    </p>
+                </div>
+
+                <div class="w-full bg-slate-950 p-3 rounded-xl border border-slate-800 flex justify-around text-xs font-bold text-slate-300">
+                    <div>
+                        <span class="block text-slate-500 text-[10px]">BONUS XP</span>
+                        <span id="badgeXpBonus" class="text-blue-400 text-sm">+30 XP</span>
+                    </div>
+                    <div class="border-r border-slate-800"></div>
+                    <div>
+                        <span class="block text-slate-500 text-[10px]">PULIH NYAWA</span>
+                        <span id="badgeHpBonus" class="text-red-400 text-sm">+20 HP</span>
+                    </div>
+                </div>
+
+                <button onclick="closeBadgeModal()" class="w-full py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl rpg-button text-base border-b-4 border-amber-700">
+                    TERUSKAN PENGEMBARAAN <i class="fa-solid fa-arrow-right ml-2"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="settingsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+            <div class="bg-slate-900 rpg-border p-6 max-w-lg w-full text-left flex flex-col gap-4">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-3">
+                    <h3 class="text-lg font-bold text-sky-400 flex items-center gap-2">
+                        <i class="fa-solid fa-file-csv"></i> Tetapan Google Sheets Guru
+                    </h3>
+                    <button onclick="closeSettingsModal()" class="text-slate-400 hover:text-white text-xl">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <p class="text-xs text-slate-300 leading-relaxed">
+                    Masukkan **URL Google Apps Script Web App** anda di bawah. Keputusan akhir murid akan disimpankan secara automatik mengikut kelas masing-masing.
+                </p>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-300 mb-1">Web App URL (Google Apps Script):</label>
+                    <input type="url" id="sheetWebhookUrl" placeholder="https://script.google.com/macros/s/.../exec" 
+                           class="w-full px-3 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-white text-xs focus:outline-none focus:border-sky-400 font-sans">
+                </div>
+
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[11px] text-slate-400 space-y-1 font-sans">
+                    <p class="font-bold text-amber-300">💡 Arahan Ringkas Google Sheet:</p>
+                    <ol class="list-decimal pl-4 space-y-0.5">
+                        <li>Buka Google Sheet anda &gt; Extension &gt; Apps Script.</li>
+                        <li>Tampal kod script `doPost(e)` (Disediakan dalam folder kerja).</li>
+                        <li>Deploy sebagai **Web App** (Who has access: **Anyone**).</li>
+                    </ol>
+                </div>
+
+                <div class="flex gap-2 justify-end mt-2">
+                    <button onclick="closeSettingsModal()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-xl text-xs font-semibold">
+                        Tutup
+                    </button>
+                    <button onclick="saveSettings()" class="px-5 py-2 bg-sky-500 hover:bg-sky-400 text-slate-950 rounded-xl text-xs font-bold">
+                        Simpan Tetapan
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <section id="endGameScreen" class="hidden w-full max-w-2xl bg-slate-900/95 rpg-border p-6 sm:p-8 flex flex-col items-center text-center shadow-2xl">
+            <div id="endGameIcon" class="w-20 h-20 bg-amber-500 text-slate-950 rounded-2xl flex items-center justify-center text-4xl mb-3 shadow-lg">
+                🏆
+            </div>
+
+            <h2 id="endGameTitle" class="text-2xl sm:text-3xl font-bold text-amber-300 mb-1">TAHNIAH! JUARA RAJA EJAAN!</h2>
+            <p id="endGameSubtitle" class="text-slate-300 text-xs sm:text-sm mb-6">Anda telah berjaya menamatkan keempat-empat stesen cabaran!</p>
+
+            <div class="w-full bg-slate-950 p-5 rounded-2xl border border-slate-800 text-left mb-6 space-y-3">
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span class="text-xs text-slate-400">Nama Murid:</span>
+                    <span id="finalStudentName" class="text-sm font-bold text-amber-300">-</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span class="text-xs text-slate-400">Kelas:</span>
+                    <span id="finalStudentClass" class="text-sm font-bold text-slate-200">-</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span class="text-xs text-slate-400">Jumlah Mata (XP):</span>
+                    <span id="finalXp" class="text-sm font-bold text-blue-400">0 XP</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span class="text-xs text-slate-400">Baki Nyawa (HP):</span>
+                    <span id="finalHp" class="text-sm font-bold text-red-400">0 HP</span>
+                </div>
+                <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+                    <span class="text-xs text-slate-400">Status Google Sheet:</span>
+                    <span id="sheetStatusText" class="text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-amber-400">
+                        Menghantar...
+                    </span>
+                </div>
+                <div class="flex justify-between items-center pt-1">
+                    <span class="text-xs text-slate-400">Lencana Dikutip:</span>
+                    <div id="finalBadgesList" class="flex gap-1 text-lg">
+                        🥇 🥈 🥉 👑
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full flex flex-col sm:flex-row gap-3">
+                <button onclick="exportCSV()" class="flex-1 py-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-sm rpg-button flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download"></i> Muat Turun CSV
+                </button>
+                <button onclick="restartGame()" class="flex-1 py-3 bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold rounded-xl text-sm rpg-button flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-rotate-right"></i> Main Semula
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="w-full max-w-5xl mx-auto mt-6 text-center text-xs text-slate-500 py-3 border-t border-slate-800/80">
+        Modul Interaktif Bahasa Melayu Tahun 2 • Sekolah Rendah • KSSR Semakan
+    </footer>
+
+    <script>
+        let gameState = {
+            studentName: '',
+            studentClass: '',
+            avatar: 'pendekar',
+            hp: 100,
+            maxHp: 100,
+            xp: 0,
+            level: 1,
+            currentQuestionIndex: 0,
+            currentStation: 1,
+            badgesEarned: [],
+            isAudioMuted: true,
+            webhookUrl: '',
+            startTime: Date.now()
+        };
+
+        const avatarMap = {
+            'pendekar': { icon: '⚔️', title: 'Pendekar Bahasa' },
+            'puteri': { icon: '👑', title: 'Puteri Bijak' },
+            'pahlawan': { icon: '🛡️', title: 'Pahlawan Ejaan' },
+            'pemanah': { icon: '🏹', title: 'Pemanah Ilmu' }
+        };
+
+        function setSafeText(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.textContent = value;
+        }
+
+        function setSafeHtml(id, value) {
+            const el = document.getElementById(id);
+            if (el) el.innerHTML = value;
+        }
+
+        const questionDatabase = [
+            {
+                station: 1,
+                stationName: 'STESEN 1: HUTAN HURUF BESAR & EJAAN',
+                monster: '👹 Raksasa Huruf Kecil',
+                prompt: 'Pilih ayat yang menggunakan HURUF BESAR dan titik dengan BETUL:',
+                options: [
+                    'siti pergi ke sekolah.',
+                    'Siti pergi ke Sekolah.',
+                    'Siti pergi ke sekolah.'
+                ],
+                correctIndex: 2,
+                explanation: 'Awal ayat dan nama khas "Siti" guna huruf besar, manakala "sekolah" ialah kata nama am (huruf kecil).'
+            },
+            {
+                station: 1,
+                stationName: 'STESEN 1: HUTAN HURUF BESAR & EJAAN',
+                monster: '👹 Raksasa Huruf Kecil',
+                prompt: 'Adik suka makan buah ________ yang manis.',
+                options: ['rambutan', 'rambutang', 'rambutann'],
+                correctIndex: 0,
+                explanation: 'Ejaan yang betul ialah "rambutan" (huruf akhiran n).'
+            },
+            {
+                station: 1,
+                stationName: 'STESEN 1: HUTAN HURUF BESAR & EJAAN',
+                monster: '👹 Raksasa Huruf Kecil',
+                prompt: 'Ayah memandu ________ baharu ke pejabat.',
+                options: ['kreta', 'kereta', 'kerta'],
+                correctIndex: 1,
+                explanation: 'Ejaan yang betul ialah "kereta" (mempunyai vokal ke-re-ta).'
+            },
+            {
+                station: 2,
+                stationName: 'STESEN 2: GUA IMBUHAN & TANDA KOMA',
+                monster: '🗿 Gargoyle Tanda Baca',
+                prompt: 'Pilih ayat yang mempunyai TANDA KOMA (,) yang betul:',
+                options: [
+                    'Ibu membeli epal, pisang dan anggur di pasar.',
+                    'Ibu membeli epal pisang, dan anggur di pasar',
+                    'Ibu, membeli epal pisang dan anggur di pasar.'
+                ],
+                correctIndex: 0,
+                explanation: 'Tanda koma (,) digunakan untuk memisahkan senarai barang.'
+            },
+            {
+                station: 2,
+                stationName: 'STESEN 2: GUA IMBUHAN & TANDA KOMA',
+                monster: '🗿 Gargoyle Tanda Baca',
+                prompt: 'Ibu sedang ________ nasi lemak yang sedap di dapur.',
+                options: ['me masak', 'memasak', 'mamasak'],
+                correctIndex: 1,
+                explanation: 'Imbuhan "meN-" dicantumkan dengan kata dasar menjadi "memasak".'
+            },
+            {
+                station: 2,
+                stationName: 'STESEN 2: GUA IMBUHAN & TANDA KOMA',
+                monster: '🗿 Gargoyle Tanda Baca',
+                prompt: 'Murid-murid Tahun 2 sedang ________ bola sepak di padang.',
+                options: ['bermain', 'ber main', 'bemain'],
+                correctIndex: 0,
+                explanation: 'Kata kerja berimbuhan "bermain" perlu ditulis secara dicantum.'
+            },
+            {
+                station: 3,
+                stationName: 'STESEN 3: TASIK TANDA SOAL & SERU',
+                monster: '🐍 Naga Tanda Soal',
+                prompt: 'Pilih TANDA BACA yang betul bagi ayat ini: "Di manakah rumah kamu __"',
+                options: ['?', '!', '.'],
+                correctIndex: 0,
+                explanation: 'Ayat tanya perlu diakhiri dengan tanda soal (?).'
+            },
+            {
+                station: 3,
+                stationName: 'STESEN 3: TASIK TANDA SOAL & SERU',
+                monster: '🐍 Naga Tanda Soal',
+                prompt: 'Pilih TANDA BACA yang betul bagi ayat ini: "Wah, cantiknya baju kamu __"',
+                options: ['?', '.', '!'],
+                correctIndex: 2,
+                explanation: 'Ayat seruan yang bermula dengan kata seru "Wah" perlu diakhiri dengan tanda seru (!).'
+            },
+            {
+                station: 3,
+                stationName: 'STESEN 3: TASIK TANDA SOAL & SERU',
+                monster: '🐍 Naga Tanda Soal',
+                prompt: 'Bapa saya menunggu bas sekolah di ________ bas.',
+                options: ['stesyen', 'stesen', 'stesion'],
+                correctIndex: 1,
+                explanation: 'Ejaan kata pinjaman Bahasa Melayu yang betul ialah "stesen".'
+            },
+            {
+                station: 4,
+                stationName: 'STESEN 4: ISTANA RAJA BAHASA',
+                monster: '👑 Raja Bahasa Agung (BOSS)',
+                prompt: 'Pilih AYAT yang betul dari segi EJAAN dan TANDA BACA:',
+                options: [
+                    'Amboi, indahnya pemandangan di Pulau Langkawi!',
+                    'amboi indahnya pemandangan di pulau langkawi.',
+                    'Amboi indahnya pemandangan di Pulau langkawi?'
+                ],
+                correctIndex: 0,
+                explanation: 'Huruf besar pada awal ayat & kata nama khas (Pulau Langkawi), ada tanda koma selepas kata seru, dan tanda seru (!) di akhir.'
+            },
+            {
+                station: 4,
+                stationName: 'STESEN 4: ISTANA RAJA BAHASA',
+                monster: '👑 Raja Bahasa Agung (BOSS)',
+                prompt: 'Pilih ayat yang mempunyai ejaan kata pinjaman dan tanda baca yang betul:',
+                options: [
+                    'Cikgu Siti mengajar menggunakan pensel.',
+                    'cikgu siti mengajar menggunakan pencel?',
+                    'Cikgu Siti mengajar menggunakan pensil!'
+                ],
+                correctIndex: 0,
+                explanation: 'Ejaan yang betul ialah "pensel", diawali huruf besar dan diakhiri dengan titik (.).'
+            },
+            {
+                station: 4,
+                stationName: 'STESEN 4: ISTANA RAJA BAHASA',
+                monster: '👑 Raja Bahasa Agung (BOSS)',
+                prompt: 'Syabas __ kamu telah berjaya mendapat johan dalam pertandingan itu __',
+                options: [
+                    ', dan !',
+                    ', dan .',
+                    '? dan !'
+                ],
+                correctIndex: 0,
+                explanation: 'Selepas kata seru "Syabas" diletakkan koma (,), dan ayat seruan diakhiri dengan tanda seru (!).'
+            }
+        ];
+
+        const stationBadges = {
+            1: { icon: '🥇', title: 'Lencana Huruf Besar', desc: 'Sempurna melepasi Hutan Huruf Besar & Ejaan!' },
+            2: { icon: '🥈', title: 'Lencana Imbuhan & Koma', desc: 'Berjaya menguasai imbuhan & tanda koma!' },
+            3: { icon: '🥉', title: 'Lencana Penanya & Seruan', desc: 'Menewaskan naga tanda soal & tanda seru!' },
+            4: { icon: '👑', title: 'Mahkota Raja Bahasa', desc: 'Tahniah! Anda telah menjadi Raja Ejaan & Tanda Baca Tahun 2!' }
+        };
+
+        let audioCtx = null;
+
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playSound(type) {
+            if (gameState.isAudioMuted) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                const now = audioCtx.currentTime;
+
+                if (type === 'correct') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.exponentialRampToValueAtTime(880, now + 0.2);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                } else if (type === 'wrong') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, now);
+                    osc.frequency.exponentialRampToValueAtTime(110, now + 0.3);
+                    gain.gain.setValueAtTime(0.3, now);
+                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                } else if (type === 'badge') {
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const o = audioCtx.createOscillator();
+                        const g = audioCtx.createGain();
+                        o.connect(g);
+                        g.connect(audioCtx.destination);
+                        o.frequency.setValueAtTime(freq, now + idx * 0.1);
+                        g.gain.setValueAtTime(0.2, now + idx * 0.1);
+                        g.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.25);
+                        o.start(now + idx * 0.1);
+                        o.stop(now + idx * 0.1 + 0.25);
+                    });
+                }
+            } catch (e) {}
+        }
+
+        function toggleBGM() {
+            gameState.isAudioMuted = !gameState.isAudioMuted;
+            const btn = document.getElementById('bgmToggleBtn');
+            const icon = document.getElementById('bgmIcon');
+            if (btn && icon) {
+                if (gameState.isAudioMuted) {
+                    icon.className = 'fa-solid fa-volume-xmark';
+                    btn.classList.remove('bg-amber-500', 'text-slate-950');
+                    btn.classList.add('bg-slate-800', 'text-amber-400');
+                } else {
+                    icon.className = 'fa-solid fa-volume-high';
+                    btn.classList.add('bg-amber-500', 'text-slate-950');
+                    btn.classList.remove('bg-slate-800', 'text-amber-400');
+                    playSound('correct');
+                }
+            }
+        }
+
+        function selectAvatar(type) {
+            gameState.avatar = type;
+            document.querySelectorAll('.avatar-option').forEach(el => {
+                el.classList.remove('border-amber-400', 'bg-slate-700');
+                el.classList.add('border-slate-700', 'bg-slate-800');
+            });
+            const selectedBtn = document.getElementById(`avatar-${type}`);
+            if (selectedBtn) {
+                selectedBtn.classList.remove('border-slate-700', 'bg-slate-800');
+                selectedBtn.classList.add('border-amber-400', 'bg-slate-700');
+            }
+        }
+
+        function startGame(e) {
+            e.preventDefault();
+            const nameEl = document.getElementById('studentName');
+            const classEl = document.getElementById('studentClass');
+            const nameInput = nameEl ? nameEl.value.trim() : '';
+            const classInput = classEl ? classEl.value.trim() : '';
+
+            if (!nameInput || !classInput) return;
+
+            gameState.studentName = nameInput;
+            gameState.studentClass = classInput;
+            gameState.hp = 100;
+            gameState.xp = 0;
+            gameState.currentQuestionIndex = 0;
+            gameState.badgesEarned = [];
+            gameState.startTime = Date.now();
+
+            setSafeText('displayHeroName', gameState.studentName);
+            setSafeText('displayHeroClass', `Kelas ${gameState.studentClass}`);
+            setSafeHtml('heroAvatarIcon', `${avatarMap[gameState.avatar].icon}<div class="absolute -bottom-2 bg-slate-950 text-amber-300 border border-amber-400 text-[10px] font-bold px-2 py-0.5 rounded-full">Lvl <span id="heroLevel">1</span></div>`);
+            setSafeText('heroTitleBadge', avatarMap[gameState.avatar].title);
+
+            const regScreen = document.getElementById('registrationScreen');
+            const dashScreen = document.getElementById('gameDashboard');
+            if (regScreen) regScreen.classList.add('hidden');
+            if (dashScreen) dashScreen.classList.remove('hidden');
+
+            updateStatsUI();
+            renderQuestion();
+        }
+
+        function updateStatsUI() {
+            gameState.hp = Math.max(0, Math.min(100, gameState.hp));
+            gameState.level = Math.floor(gameState.xp / 100) + 1;
+            setSafeText('heroLevel', gameState.level);
+
+            const hpFill = document.getElementById('hpFill');
+            if (hpFill) hpFill.style.width = `${gameState.hp}%`;
+            setSafeText('hpText', `${gameState.hp} / ${gameState.maxHp}`);
+
+            const xpFill = document.getElementById('xpFill');
+            const currentLevelXp = gameState.xp % 100;
+            if (xpFill) xpFill.style.width = `${currentLevelXp}%`;
+            setSafeText('xpText', `${gameState.xp} XP`);
+
+            const currentQ = questionDatabase[gameState.currentQuestionIndex];
+            if (currentQ) {
+                gameState.currentStation = currentQ.station;
+                updateStationCardsUI(currentQ.station);
+            }
+        }
+
+        function updateStationCardsUI(activeStation) {
+            setSafeText('stationProgressText', `Stesen ${activeStation} / 4`);
+
+            for (let i = 1; i <= 4; i++) {
+                const card = document.getElementById(`stesenCard${i}`);
+                const badge = document.getElementById(`stesenBadge${i}`);
+
+                if (card && badge) {
+                    if (i < activeStation) {
+                        card.className = "stesen-card p-3 rounded-xl border-2 border-emerald-500 bg-emerald-500/10 flex flex-col items-center text-center";
+                        badge.textContent = "✅ Selesai";
+                        badge.className = "text-[10px] text-emerald-300 mt-1 font-bold";
+                    } else if (i === activeStation) {
+                        card.className = "stesen-card p-3 rounded-xl border-2 border-amber-400 bg-amber-500/20 flex flex-col items-center text-center animate-pulse";
+                        badge.textContent = "🟡 Sedang Dijalani";
+                        badge.className = "text-[10px] text-amber-300 mt-1 font-bold";
+                    } else {
+                        card.className = "stesen-card p-3 rounded-xl border-2 border-slate-800 bg-slate-950/50 opacity-50 flex flex-col items-center text-center";
+                        badge.textContent = "🔒 Terkunci";
+                        badge.className = "text-[10px] text-slate-500 mt-1";
+                    }
+                }
+            }
+        }
+
+        function renderQuestion() {
+            const feedbackBox = document.getElementById('feedbackBox');
+            if (feedbackBox) feedbackBox.className = 'hidden';
+
+            if (gameState.currentQuestionIndex >= questionDatabase.length) {
+                endGame(true);
+                return;
+            }
+
+            const q = questionDatabase[gameState.currentQuestionIndex];
+
+            setSafeText('currentStationTag', q.stationName);
+            setSafeText('monsterName', q.monster);
+            setSafeText('qIndexText', gameState.currentQuestionIndex + 1);
+            setSafeText('qTotalText', questionDatabase.length);
+            setSafeText('questionPrompt', `"${q.prompt}"`);
+
+            const monsterAvatars = { 1: '👹', 2: '🗿', 3: '🐍', 4: '👑' };
+            setSafeText('monsterAvatar', monsterAvatars[q.station] || '👾');
+
+            const optionsGrid = document.getElementById('optionsGrid');
+            if (optionsGrid) {
+                optionsGrid.innerHTML = '';
+
+                q.options.forEach((optText, idx) => {
+                    const btn = document.createElement('button');
+                    btn.className = `w-full py-4 px-4 bg-slate-800 hover:bg-slate-700 text-slate-100 font-bold text-base sm:text-lg rounded-xl border-2 border-slate-700 hover:border-amber-400 rpg-button transition flex items-center justify-center text-center`;
+                    btn.innerHTML = `<span class="inline-block px-2.5 py-0.5 bg-slate-950 text-amber-300 rounded-lg text-xs mr-2 font-mono border border-slate-800">${String.fromCharCode(65 + idx)}</span> ${optText}`;
+                    btn.onclick = () => checkAnswer(idx);
+                    optionsGrid.appendChild(btn);
+                });
+            }
+        }
+
+        function checkAnswer(selectedIndex) {
+            const q = questionDatabase[gameState.currentQuestionIndex];
+            const feedbackBox = document.getElementById('feedbackBox');
+            const optionsGrid = document.getElementById('optionsGrid');
+
+            if (optionsGrid) {
+                Array.from(optionsGrid.children).forEach(btn => btn.disabled = true);
+            }
+
+            if (selectedIndex === q.correctIndex) {
+                playSound('correct');
+                gameState.xp += 20;
+                gameState.hp = Math.min(100, gameState.hp + 10);
+                
+                if (feedbackBox) {
+                    feedbackBox.className = 'p-4 rounded-xl border-2 border-emerald-500 bg-emerald-950/80 text-emerald-200 text-center font-bold block animate-bounce-gentle';
+                    feedbackBox.innerHTML = `<i class="fa-solid fa-circle-check text-xl mr-2 text-emerald-400"></i> TAHNIAH! Jawapan Betul! (+20 XP, +10 HP)`;
+                }
+
+                confetti({
+                    particleCount: 40,
+                    spread: 60,
+                    origin: { y: 0.7 }
+                });
+
+            } else {
+                playSound('wrong');
+                gameState.hp -= 20;
+                
+                if (feedbackBox) {
+                    feedbackBox.className = 'p-4 rounded-xl border-2 border-rose-500 bg-rose-950/80 text-rose-200 text-center font-bold block animate-shake';
+                    feedbackBox.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-xl mr-2 text-rose-400"></i> KURANG TEPAT! (-20 HP)<br><span class="text-xs font-normal text-rose-300 mt-1 block">${q.explanation}</span>`;
+                }
+            }
+
+            updateStatsUI();
+
+            if (gameState.hp <= 0) {
+                setTimeout(() => {
+                    endGame(false);
+                }, 1500);
+                return;
+            }
+
+            setTimeout(() => {
+                const isLastQuestionInStation = 
+                    (gameState.currentQuestionIndex + 1 >= questionDatabase.length) || 
+                    (questionDatabase[gameState.currentQuestionIndex + 1].station !== q.station);
+
+                if (isLastQuestionInStation && gameState.hp > 0) {
+                    triggerStationBadgePopup(q.station);
+                } else {
+                    gameState.currentQuestionIndex++;
+                    renderQuestion();
+                }
+            }, 1800);
+        }
+
+        function triggerStationBadgePopup(stationNum) {
+            playSound('badge');
+            const badge = stationBadges[stationNum];
+            if (badge && !gameState.badgesEarned.includes(badge.title)) {
+                gameState.badgesEarned.push(badge.title);
+            }
+
+            if (badge) {
+                setSafeText('badgeIcon', badge.icon);
+                setSafeText('badgeTitle', badge.title);
+                setSafeText('badgeDesc', badge.desc);
+            }
+
+            gameState.xp += 30;
+            gameState.hp = Math.min(100, gameState.hp + 20);
+            updateStatsUI();
+
+            const modal = document.getElementById('badgeModal');
+            if (modal) modal.classList.remove('hidden');
+
+            confetti({
+                particleCount: 100,
+                spread: 100,
+                origin: { y: 0.5 }
+            });
+        }
+
+        function closeBadgeModal() {
+            const modal = document.getElementById('badgeModal');
+            if (modal) modal.classList.add('hidden');
+            gameState.currentQuestionIndex++;
+            renderQuestion();
+        }
+
+        function endGame(isVictory) {
+            const dashScreen = document.getElementById('gameDashboard');
+            const endScreen = document.getElementById('endGameScreen');
+            if (dashScreen) dashScreen.classList.add('hidden');
+            if (endScreen) endScreen.classList.remove('hidden');
+
+            const icon = document.getElementById('endGameIcon');
+            const title = document.getElementById('endGameTitle');
+
+            if (isVictory) {
+                playSound('badge');
+                if (icon) icon.textContent = '🏆';
+                if (title) {
+                    title.textContent = 'TAHNIAH! JUARA RAJA EJAAN!';
+                    title.className = 'text-2xl sm:text-3xl font-bold text-amber-300 mb-1';
+                }
+                setSafeText('endGameSubtitle', 'Anda telah berjaya menamatkan keempat-empat stesen cabaran!');
+                confetti({ particleCount: 150, spread: 120, origin: { y: 0.4 } });
+            } else {
+                playSound('wrong');
+                if (icon) icon.textContent = '🛡️';
+                if (title) {
+                    title.textContent = 'PERMAINAN TAMAT!';
+                    title.className = 'text-2xl sm:text-3xl font-bold text-rose-400 mb-1';
+                }
+                setSafeText('endGameSubtitle', 'Nyawa wira anda telah habis. Jangan putus asa, cuba lagi!');
+            }
+
+            setSafeText('finalStudentName', gameState.studentName);
+            setSafeText('finalStudentClass', gameState.studentClass);
+            setSafeText('finalXp', `${gameState.xp} XP`);
+            setSafeText('finalHp', `${gameState.hp} HP`);
+
+            const badgeContainer = document.getElementById('finalBadgesList');
+            if (badgeContainer) {
+                badgeContainer.innerHTML = gameState.badgesEarned.length > 0 
+                    ? gameState.badgesEarned.map(b => '🏅').join(' ')
+                    : 'Tiada Lencana';
+            }
+
+            submitToGoogleSheet();
+        }
+
+        function submitToGoogleSheet() {
+            const statusText = document.getElementById('sheetStatusText');
+            if (statusText) {
+                statusText.textContent = "Menghantar...";
+                statusText.className = "text-xs font-semibold px-2 py-0.5 rounded bg-amber-900/80 text-amber-300";
+            }
+
+            const timeTaken = Math.round((Date.now() - gameState.startTime) / 1000);
+
+            const payload = {
+                studentName: gameState.studentName,
+                studentClass: gameState.studentClass,
+                subject: "Bahasa Melayu",
+                score: gameState.xp,
+                total: questionDatabase.length * 20,
+                percent: Math.round((gameState.xp / (questionDatabase.length * 20)) * 100),
+                timeSpent: timeTaken,
+                date: new Date().toLocaleString('ms-MY'),
+                nama: gameState.studentName,
+                kelas: gameState.studentClass,
+                markahXp: gameState.xp,
+                bakiHp: gameState.hp,
+                lencanaDikutip: gameState.badgesEarned.join(', ') || 'Tiada',
+                status: gameState.hp > 0 ? 'BERJAYA' : 'GAGAL'
+            };
+
+            const url = gameState.webhookUrl || localStorage.getItem('bm_rpg_webhook_url') || localStorage.getItem('edukasi_gs_url');
+
+            if (!url) {
+                if (statusText) {
+                    statusText.textContent = "Sheet Belum Disambungkan (Sila Set Di Tetapan Guru)";
+                    statusText.className = "text-xs font-semibold px-2 py-0.5 rounded bg-slate-800 text-slate-400";
+                }
+                return;
+            }
+
+            fetch(url, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                if (statusText) {
+                    statusText.textContent = "✅ Berjaya Dihantar Ke Google Sheet Guru!";
+                    statusText.className = "text-xs font-semibold px-2 py-0.5 rounded bg-emerald-900/80 text-emerald-300";
+                }
+            }).catch(err => {
+                if (statusText) {
+                    statusText.textContent = "⚠️ Ralat Penghantaran (Muat Turun CSV)";
+                    statusText.className = "text-xs font-semibold px-2 py-0.5 rounded bg-rose-900/80 text-rose-300";
+                }
+            });
+        }
+
+        function exportCSV() {
+            const rows = [
+                ["Tarikh", "Nama Murid", "Kelas", "Markah XP", "Baki HP", "Lencana", "Status"],
+                [
+                    new Date().toLocaleString('ms-MY'),
+                    `"${gameState.studentName}"`,
+                    `"${gameState.studentClass}"`,
+                    gameState.xp,
+                    gameState.hp,
+                    `"${gameState.badgesEarned.join(', ')}"`,
+                    gameState.hp > 0 ? 'BERJAYA' : 'GAGAL'
+                ]
+            ];
+
+            let csvContent = "data:text/csv;charset=utf-8," + rows.map(e => e.join(",")).join("\n");
+            let encodedUri = encodeURI(csvContent);
+            let link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `Keputusan_BM_Tahun2_${gameState.studentName.replace(/\s+/g, '_')}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        function openSettingsModal() {
+            const savedUrl = localStorage.getItem('bm_rpg_webhook_url') || localStorage.getItem('edukasi_gs_url') || '';
+            const input = document.getElementById('sheetWebhookUrl');
+            if (input) input.value = savedUrl;
+            const modal = document.getElementById('settingsModal');
+            if (modal) modal.classList.remove('hidden');
+        }
+
+        function closeSettingsModal() {
+            const modal = document.getElementById('settingsModal');
+            if (modal) modal.classList.add('hidden');
+        }
+
+        function saveSettings() {
+            const input = document.getElementById('sheetWebhookUrl');
+            const url = input ? input.value.trim() : '';
+            gameState.webhookUrl = url;
+            localStorage.setItem('bm_rpg_webhook_url', url);
+            localStorage.setItem('edukasi_gs_url', url);
+            closeSettingsModal();
+        }
+
+        function restartGame() {
+            const endScreen = document.getElementById('endGameScreen');
+            const regScreen = document.getElementById('registrationScreen');
+            if (endScreen) endScreen.classList.add('hidden');
+            if (regScreen) regScreen.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
